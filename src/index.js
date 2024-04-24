@@ -15,7 +15,7 @@ const messageSending = {
 		} else {
 			let num = 1
 			console.log('cron-task was created')
-			const morningTask = cron.schedule('* * * * *', () => {
+			const morningTask = cron.schedule('0 10 * * *', () => {
 				console.log('next crontask step is done')
 				const randomNumber = Math.floor(Math.random() * 350)
 				if (num % 2 === 0) {
