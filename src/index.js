@@ -9,14 +9,14 @@ const bot = new Bot(process.env.BOT_TOKEN)
 const messageSending = {
 	url_taskMap: {},
 	startMorningSending(userId) {
-		if (this.url_taskMap.morningJob) {
-			console.log('cron-task is already created')
+		if (this.url_taskMap[userId]) {
+			console.log('300 cron-task is already created')
 			return
 		} else {
 			let num = 1
-			console.log('cron-task was created')
+			console.log('201 cron-task was created')
 			const morningTask = cron.schedule('0 10 * * *', () => {
-				console.log('next crontask step is done')
+				console.log('200 next crontask step is done')
 				const randomNumber = Math.floor(Math.random() * 350)
 				if (num % 2 === 0) {
 					bot.api.sendPhoto(userId, images.album_1[randomNumber])
@@ -26,17 +26,17 @@ const messageSending = {
 					num++
 				}
 			})
-			this.url_taskMap['morningJob'] = morningTask
+			this.url_taskMap[userId] = morningTask
 		}
 	},
-	stopMorningSending() {
-		if (!this.url_taskMap.morningJob) {
-			console.log('cron-task is already stopped')
+	stopMorningSending(userId) {
+		if (!this.url_taskMap[userId]) {
+			console.log('301 cron-task is already stopped')
 			return
 		} else {
-			console.log('cron-task was stopped')
-			this.url_taskMap.morningJob.stop()
-			delete this.url_taskMap.morningJob
+			console.log('202 cron-task was stopped')
+			this.url_taskMap[userId].stop()
+			delete this.url_taskMap[userId]
 		}
 	},
 }
@@ -74,7 +74,7 @@ bot.command('stop', async ctx => {
 	await ctx.reply(`Дорогой друг, вы всегда можете
 возобновить получение посланий,
 выбрав в меню команду «старт» 🙏🏻`)
-	messageSending.stopMorningSending()
+	messageSending.stopMorningSending(ctx.msg.from.id)
 	await ctx.deleteMessage()
 })
 
