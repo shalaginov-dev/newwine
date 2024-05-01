@@ -8,16 +8,18 @@ const bot = new Bot(process.env.BOT_TOKEN)
 
 const messageSending = {
 	url_taskMap: {},
-	startMorningSending(userId) {
+	startMorningSending(user) {
+		const userId = user.id
+		console.log(userId)
 		if (this.url_taskMap[userId]) {
 			console.log('300 cron-task is already created')
 			return
 		} else {
 			let num = 1
 			console.log('201 cron-task was created')
-			const morningTask = cron.schedule('0 10 * * *', () => {
-				console.log('200 next crontask step is done')
-				const randomNumber = Math.floor(Math.random() * 350)
+			const morningTask = cron.schedule('* * * * *', () => {
+				console.log(`200 next cron-task step is done (${user.username})`)
+				const randomNumber = Math.floor(Math.random() * 374)
 				if (num % 2 === 0) {
 					bot.api.sendPhoto(userId, images.album_1[randomNumber])
 					num++
@@ -29,7 +31,8 @@ const messageSending = {
 			this.url_taskMap[userId] = morningTask
 		}
 	},
-	stopMorningSending(userId) {
+	stopMorningSending(user) {
+		const userId = user.id
 		if (!this.url_taskMap[userId]) {
 			console.log('301 cron-task is already stopped')
 			return
@@ -66,7 +69,7 @@ bot.command('start', async ctx => {
 Теперь каждый день в 10.00 по мск
 ожидайте новое послание 💌`
 	)
-	messageSending.startMorningSending(ctx.msg.from.id)
+	messageSending.startMorningSending(ctx.msg.from)
 	await ctx.deleteMessage()
 })
 
@@ -74,7 +77,7 @@ bot.command('stop', async ctx => {
 	await ctx.reply(`Дорогой друг, вы всегда можете
 возобновить получение посланий,
 выбрав в меню команду «старт» 🙏🏻`)
-	messageSending.stopMorningSending(ctx.msg.from.id)
+	messageSending.stopMorningSending(ctx.msg.from)
 	await ctx.deleteMessage()
 })
 
@@ -100,10 +103,10 @@ bot.command('links', async ctx => {
 			'Inst. «Реформация»',
 			'https://www.instagram.com/reformation_spirit?igsh=eXNtZWh4cTN2NDFw'
 		)
-	await ctx.reply(`🍷            мы в других соцсетях           👇🏼`, {
+	await ctx.reply(`🍷           мы в других соцсетях          👇🏼`, {
 		reply_markup: mainKeyboard,
 	})
-	await ctx.reply(`🍷          также мы рекомендуем         👇🏼`, {
+	await ctx.reply(`🍷         также мы рекомендуем        👇🏼`, {
 		reply_markup: bonusKeyboard,
 	})
 	await ctx.deleteMessage()
@@ -126,6 +129,22 @@ bot.callbackQuery('to-second-part', async ctx => {
 
 bot.callbackQuery('to-third-part', async ctx => {
 	await ctx.reply(detoxMessage.thirdPart)
+})
+
+bot.hears(/users/i, async ctx => {
+	if (
+		ctx.msg.from.id.toString() !== '1898590789' &&
+		ctx.msg.from.id.toString() !== '477328986'
+	)
+		return
+	else
+		await ctx.reply(
+			`участники: ${Object.keys(messageSending.url_taskMap).length}`
+		)
+})
+
+bot.on('message', async ctx => {
+	await ctx.reply('Простите, мой хозяин еще не научил меня понимать людей 🥺')
 })
 
 bot.catch(err => {
