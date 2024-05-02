@@ -577,7 +577,7 @@ class Image {
 			'https://ibb.co/MRNJmL9',
 			'https://ibb.co/Mh8HvPR',
 			'https://ibb.co/KGhNmgK',
-			'https://ibb.co/7SrPVJY',
+			'https://i.ibb.co/rQ5YMG7/photo-386-30-09-2022-12-54-08.jpg',
 			'https://ibb.co/qDNWMGg',
 			'https://ibb.co/dK2WJKK',
 			'https://ibb.co/PzkHPb8',
