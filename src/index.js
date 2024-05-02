@@ -1,67 +1,9 @@
-const { Bot, GrammyError, HttpError, InlineKeyboard } = require('grammy')
-const cron = require('node-cron')
+const { GrammyError, HttpError, InlineKeyboard } = require('grammy')
 const detoxMessage = require('../public/detox.js')
-const images = require('../public/images.js')
+const messageSending = require('./bot.service.js')
+const bot = require('./bot.create.js')
+require('./bot.menu.js')
 require('dotenv').config()
-
-const bot = new Bot(process.env.BOT_TOKEN)
-
-const messageSending = {
-	url_taskMap: {},
-	startMorningSending(user) {
-		const userId = user.id
-		console.log(userId)
-		if (this.url_taskMap[userId]) {
-			console.log('300 cron-task is already created')
-			return
-		} else {
-			let num = 1
-			console.log('201 cron-task was created')
-			const morningTask = cron.schedule('* * * * *', () => {
-				console.log(`200 next cron-task step is done (${user.username})`)
-				const randomNumber = Math.floor(Math.random() * 374)
-				if (num % 2 === 0) {
-					bot.api.sendPhoto(userId, images.album_1[randomNumber])
-					num++
-				} else {
-					bot.api.sendPhoto(userId, images.album_2[randomNumber])
-					num++
-				}
-			})
-			this.url_taskMap[userId] = morningTask
-		}
-	},
-	stopMorningSending(user) {
-		const userId = user.id
-		if (!this.url_taskMap[userId]) {
-			console.log('301 cron-task is already stopped')
-			return
-		} else {
-			console.log('202 cron-task was stopped')
-			this.url_taskMap[userId].stop()
-			delete this.url_taskMap[userId]
-		}
-	},
-}
-
-bot.api.setMyCommands([
-	{
-		command: 'start',
-		description: 'Начать получать послания',
-	},
-	{
-		command: 'stop',
-		description: 'Приостановить получение посланий',
-	},
-	{
-		command: 'links',
-		description: 'Наши ссылки',
-	},
-	{
-		command: 'detox',
-		description: 'Детоксикация от религии',
-	},
-])
 
 bot.command('start', async ctx => {
 	await ctx.reply(
@@ -103,10 +45,10 @@ bot.command('links', async ctx => {
 			'Inst. «Реформация»',
 			'https://www.instagram.com/reformation_spirit?igsh=eXNtZWh4cTN2NDFw'
 		)
-	await ctx.reply(`🍷           мы в других соцсетях          👇🏼`, {
+	await ctx.reply(`🍷      мы в других соцсетях     👇🏼`, {
 		reply_markup: mainKeyboard,
 	})
-	await ctx.reply(`🍷         также мы рекомендуем        👇🏼`, {
+	await ctx.reply(`🍷    также мы рекомендуем   👇🏼`, {
 		reply_markup: bonusKeyboard,
 	})
 	await ctx.deleteMessage()
