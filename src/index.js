@@ -81,7 +81,7 @@ bot.hears(/users/i, async ctx => {
 		return
 	else
 		await ctx.reply(
-			`участники: ${Object.keys(messageSending.url_taskMap).length}`
+			`участники: ${messageSending.users.length}`
 		)
 })
 
