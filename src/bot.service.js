@@ -6,8 +6,7 @@ class MessageSending {
     url_taskMap = {}
     users = []
     num = 1
-    startMorningSending(user) {
-        const userId = user.id
+    startSending(userId) {
         if (this.users.find(user => user === userId)) {
             return
         } else {
@@ -15,7 +14,7 @@ class MessageSending {
             if (this.url_taskMap['job']){
                 return
             } else {
-                const morningTask = cron.schedule('0 10 * * *', () => {
+                const cronTask = cron.schedule('*/5 * * * * *', () => {
                     if(!this.users.length){
                         return
                     } else {
@@ -30,20 +29,20 @@ class MessageSending {
                         this.num > 1000 ? this.num = 1 : this.num ++
                     }
                 })
-                this.url_taskMap['job'] = morningTask
+                this.url_taskMap['job'] = cronTask
             }
 
         }
     }
 
-    stopMorningSending(user) {
-        const userId = user.id
+    stopSending(userId) {
         if (!this.users.find(user => user === userId)) {
             return
         } else {
             this.users = this.users.filter(user => user !== userId)
         }
     }
+
 }
 
 module.exports = new MessageSending()
