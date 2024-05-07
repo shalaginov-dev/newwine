@@ -1,5 +1,5 @@
 const { Composer } = require('grammy')
-const messageSending = require('../../bot.service.js')
+const messageSending = require('../../service/messageSending.js')
 const bot = require('../../connection/token.js')
 
 module.exports = new Composer().use(

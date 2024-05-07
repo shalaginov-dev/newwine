@@ -1,6 +1,6 @@
-const images = require('../public/images.js')
+const images = require('../../public/images.js')
 const cron = require('node-cron')
-const bot = require('./connection/token.js')
+const bot = require('../connection/token.js')
 
 class MessageSending {
 	url_taskMap = {}
