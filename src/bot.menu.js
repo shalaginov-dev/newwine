@@ -1,4 +1,4 @@
-const bot = require('./bot.create.js')
+const bot = require('./connection/token.js')
 
 module.exports = bot.api.setMyCommands([
 	{
