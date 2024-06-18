@@ -1,4 +1,4 @@
-const images = require('../../public/images.js')
+const images = require('../../public/images_full.js')
 const cron = require('node-cron')
 const bot = require('../connection/token.js')
 
@@ -26,7 +26,7 @@ class MessageSending {
 								bot.api.sendPhoto(user, images.album_2[randomNumber])
 							}
 						})
-						this.num > 1000 ? (this.num = 1) : this.num++
+						this.num++
 					}
 				})
 				this.url_taskMap['job'] = cronTask
