@@ -1,6 +1,7 @@
 const images = require('../../public/images_full.js')
 const cron = require('node-cron')
 const bot = require('../connection/token.js')
+const { GrammyError, HttpError } = require('grammy')
 
 class MessageSending {
 	url_taskMap = {}
@@ -18,12 +19,33 @@ class MessageSending {
 					if (!this.users.length) {
 						return
 					} else {
-						this.users.map(user => {
+						this.users.map(async user => {
 							const randomNumber = Math.floor(Math.random() * 374)
-							if (this.num % 2 === 0) {
-								bot.api.sendPhoto(user, images.album_1[randomNumber])
-							} else {
-								bot.api.sendPhoto(user, images.album_2[randomNumber])
+							try {
+								if (this.num % 2 === 0) {
+									await bot.api.sendPhoto(user, images.album_1[randomNumber])
+								} else {
+									await bot.api.sendPhoto(user, images.album_2[randomNumber])
+								}
+							} catch (error) {
+								if (error instanceof GrammyError) {
+									console.error(
+										`Ошибка при отправке фото: ${error.description}`
+									)
+									if (
+										error.error_code === 403 &&
+										error.description.includes('user is deactivated')
+									) {
+										console.log(
+											`Пользователь ${user} деактивирован, удаляю из списка рассылки.`
+										)
+										this.stopSending(user)
+									}
+								} else if (error instanceof HttpError) {
+									console.error('HTTP ошибка:', error)
+								} else {
+									console.error('Непредвиденная ошибка:', error)
+								}
 							}
 						})
 						this.num++
