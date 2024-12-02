@@ -1,4 +1,5 @@
 const bot = require('../connection/token.js')
+const { GrammyError, HttpError } = require('grammy')
 
 module.exports = bot.catch(err => {
 	const ctx = err.ctx
