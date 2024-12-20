@@ -1,7 +1,8 @@
 const images = require('../../public/images_full.js')
-const cron = require('node-cron')
-const bot = require('../connection/token.js')
 const { GrammyError, HttpError } = require('grammy')
+const bot = require('../connection/token.js')
+const logger = require('../utils/log.js')
+const cron = require('node-cron')
 
 class MessageSending {
 	url_taskMap = {}
@@ -16,6 +17,7 @@ class MessageSending {
 				return
 			} else {
 				const cronTask = cron.schedule('0 10 * * *', () => {
+					// const cronTask = cron.schedule('*/5 * * * * *', () => {
 					if (!this.users.length) {
 						return
 					} else {
@@ -24,28 +26,29 @@ class MessageSending {
 							try {
 								if (this.num % 2 === 0) {
 									await bot.api.sendPhoto(user, images.album_1[randomNumber])
+									// await bot.api.sendPhoto(user, images.album_1[400])
 								} else {
 									await bot.api.sendPhoto(user, images.album_2[randomNumber])
 								}
 							} catch (error) {
 								if (error instanceof GrammyError) {
-									console.error(
-										`Ошибка при отправке фото: ${error.description}
-userid: ${error.payload.chat_id} photo: ${error.payload.photo}`
+									logger.error(
+										`Ошибка при отправке фото: ${error.description} userid: ${error.payload.chat_id} 
+										photo: ${error.payload.photo}`
 									)
 									if (
 										error.error_code === 403 &&
 										error.description.includes('user is deactivated')
 									) {
-										console.log(
+										logger.error(
 											`Пользователь ${user} деактивирован, удаляю из списка рассылки.`
 										)
 										this.stopSending(user)
 									}
 								} else if (error instanceof HttpError) {
-									console.error('HTTP ошибка:', error)
+									logger.error('HTTP ошибка:', error)
 								} else {
-									console.error('Непредвиденная ошибка:', error)
+									logger.error('Непредвиденная ошибка:', error)
 								}
 							}
 						})
