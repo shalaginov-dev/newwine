@@ -33,8 +33,7 @@ class MessageSending {
 							} catch (error) {
 								if (error instanceof GrammyError) {
 									logger.error(
-										`Ошибка при отправке фото: ${error.description} userid: ${error.payload.chat_id} 
-										photo: ${error.payload.photo}`
+										`Ошибка при отправке фото: ${error.description} userid: ${error.payload.chat_id} photo: ${error.payload.photo}`
 									)
 									if (
 										error.error_code === 403 &&
